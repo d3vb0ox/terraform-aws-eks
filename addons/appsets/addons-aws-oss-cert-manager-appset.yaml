@@ -40,9 +40,8 @@ spec:
             ignoreMissingValueFiles: true
             valueFiles:
               - $values/{{metadata.annotations.addons_repo_basepath}}addons/{{values.addonChart}}/values.yaml
-              - $values/{{metadata.annotations.addons_repo_basepath}}addons/{{values.addonChart}}/{{metadata.annotations.}}/values-{{metadata.annotations.addons_repo_revision}}.yaml
+              - $values/{{metadata.annotations.addons_repo_basepath}}addons/{{values.addonChart}}/values-{{metadata.annotations.cert_manager_chart_version}}.yaml
             values: |
-              installCRDs: true
               serviceAccount:
                 name: {{metadata.annotations.cert_manager_service_account}}
                 annotations:

@@ -147,7 +147,7 @@ locals {
       addons_repo_revision = local.gitops_addons_revision
     },
     {
-      cert_manager_chart_version = try(var.cert_manager_helm_config.version, null)
+      cert_manager_chart_version = try(var.cert_manager_helm_config.chart_version, null)
     }
   )
   #     try(local.aws_addons.enable_velero, false) ? {
