@@ -203,7 +203,9 @@ module "gitops_bridge_bootstrap" {
 ################################################################################
 # EKS Blueprints Addons
 ################################################################################
-variable "cert_manager_helm_config" {}
+variable "cert_manager_helm_config" {
+  default = {}
+}
 module "eks_blueprints_addons" {
   source  = "aws-ia/eks-blueprints-addons/aws"
   version = "~> 1.0"
