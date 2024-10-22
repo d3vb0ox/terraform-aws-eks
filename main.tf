@@ -120,7 +120,7 @@ module "eks" {
     iam_role_attach_cni_policy = true
   }
 
-#   node_security_group_tags = var.enable_karpenter ? { "karpenter.sh/discovery" = var.cluster_name } : {}
+  #   node_security_group_tags = var.enable_karpenter ? { "karpenter.sh/discovery" = var.cluster_name } : {}
 }
 
 # EKS Access Entries API Method

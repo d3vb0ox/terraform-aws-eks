@@ -39,7 +39,7 @@ variable "addons" {
 variable "gitops_addons_org" {
   description = "Git repository org/user contains for addons"
   type        = string
-  default     = "https://github.com/truemark"
+  default     = "https://github.com/d3vb0ox"
 }
 variable "gitops_addons_repo" {
   description = "Git repository contains for addons"
@@ -59,7 +59,7 @@ variable "gitops_addons_basepath" {
 variable "gitops_addons_path" {
   description = "Git repository path for addons"
   type        = string
-  default     = "bootstrap/control-plane/addons"
+  default     = "addons/appsets"
 }
 
 
@@ -129,7 +129,7 @@ locals {
   )
 
   addons_metadata = merge(
-    #     module.eks_blueprints_addons.gitops_metadata,
+    module.eks_blueprints_addons.gitops_metadata,
     {
       aws_cluster_name = module.eks.cluster_name
       aws_region       = local.region
@@ -145,7 +145,11 @@ locals {
       addons_repo_basepath = local.gitops_addons_basepath
       addons_repo_path     = local.gitops_addons_path
       addons_repo_revision = local.gitops_addons_revision
-  })
+    },
+    {
+      cert_manager_chart_version = try(var.cert_manager_helm_config.version, null)
+    }
+  )
   #     try(local.aws_addons.enable_velero, false) ? {
   #       velero_backup_s3_bucket_prefix = try(local.velero_backup_s3_bucket_prefix, "")
   #     velero_backup_s3_bucket_name = try(local.velero_backup_s3_bucket_name, "") } : {} # Required when enabling addon velero
@@ -193,4 +197,30 @@ module "gitops_bridge_bootstrap" {
     ]
   }
   apps = local.argocd_apps
+}
+
+
+################################################################################
+# EKS Blueprints Addons
+################################################################################
+variable "cert_manager_helm_config" {}
+module "eks_blueprints_addons" {
+  source  = "aws-ia/eks-blueprints-addons/aws"
+  version = "~> 1.0"
+
+  cluster_name      = module.eks.cluster_name
+  cluster_endpoint  = module.eks.cluster_endpoint
+  cluster_version   = module.eks.cluster_version
+  oidc_provider_arn = module.eks.oidc_provider_arn
+
+  # Using GitOps Bridge
+  create_kubernetes_resources = false
+
+  # EKS Blueprints Addons
+
+  ## Cert Manager
+  enable_cert_manager = local.aws_addons.enable_cert_manager
+  cert_manager        = var.cert_manager_helm_config
+
+  tags = local.tags
 }
