@@ -7,22 +7,19 @@ spec:
   syncPolicy:
     preserveResourcesOnDeletion: true
   generators:
-    - merge:
-        mergeKeys: [server]
-        generators:
-          - clusters:
-              values:
-                addonChart: cert-manager
-                # anything not staging or prod use this version
-                addonChartVersion: '{{metadata.annotations.cert_manager_chart_version}}' # v1.14.3
-                addonChartRepository: https://charts.jetstack.io
-              selector:
-                matchExpressions:
-                  - key: enable_cert_manager
-                    operator: In
-                    values: ['true']
-                  - key: aws_cluster_name
-                    operator: Exists
+    - clusters:
+        values:
+          addonChart: cert-manager
+          # anything not staging or prod use this version
+          addonChartVersion: '{{metadata.annotations.cert_manager_chart_version}}' # v1.14.3
+          addonChartRepository: https://charts.jetstack.io
+        selector:
+          matchExpressions:
+            - key: enable_cert_manager
+              operator: In
+              values: ['true']
+            - key: aws_cluster_name
+              operator: Exists
   template:
     metadata:
       name: addon-{{name}}-{{values.addonChart}}
